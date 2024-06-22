@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ContactManagerStarter.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20221212030042_seed")]
-    partial class seed
+    [Migration("20240621180653_RevertOrUpdateSeed20221212030042")]
+    partial class RevertOrUpdateSeed20221212030042
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -174,11 +174,11 @@ namespace ContactManagerStarter.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsPrimary")
                         .HasColumnType("bit");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -192,32 +192,32 @@ namespace ContactManagerStarter.Migrations
                             Id = new Guid("5111f412-a7f4-4169-bb27-632687569ccd"),
                             ContactId = new Guid("930d4f10-9daf-4582-b4bb-cb9abfd382b3"),
                             Email = "Bill@gates.com",
-                            Type = 0,
-                            IsPrimary = true
+                            IsPrimary = true,
+                            Type = 0
                         },
                         new
                         {
                             Id = new Guid("3ddeb084-5e5d-4eca-b275-e4f6886e04dc"),
                             ContactId = new Guid("b728f6ef-65d8-4da2-8e5f-0f67e3c3401c"),
                             Email = "Steve@Jobs.com",
-                            Type = 0,
-                            IsPrimary = true
+                            IsPrimary = true,
+                            Type = 0
                         },
                         new
                         {
                             Id = new Guid("3a406f64-ad7b-4098-ab01-7e93aae2b851"),
                             ContactId = new Guid("b728f6ef-65d8-4da2-8e5f-0f67e3c3401c"),
                             Email = "SteveJobs@apple.com",
-                            Type = 1,
-                            IsPrimary = false
+                            IsPrimary = false,
+                            Type = 1
                         },
                         new
                         {
                             Id = new Guid("d1a50413-20c0-4972-a351-8be24e1fc939"),
                             ContactId = new Guid("99580d68-9d2f-4552-862e-06b3204193f1"),
                             Email = "SundarPichai@gmail.com",
-                            Type = 1,
-                            IsPrimary = true
+                            IsPrimary = true,
+                            Type = 1
                         });
                 });
 

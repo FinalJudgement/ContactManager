@@ -113,6 +113,7 @@ namespace ContactManager.Controllers
                 {
                     Type = email.Type,
                     Email = email.Email,
+                    IsPrimary = email.IsPrimary,
                     Contact = contact
                 });
             }

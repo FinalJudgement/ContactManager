@@ -30,9 +30,16 @@ $(function () {
     $("#deleteContactConfirmed").data("id", id);
   });
 
+  $(document).on("click", ".make-primary", function () {
+    let emailItem = $(this).closest(".emailListItem");
+    let email = emailItem.data("email");
+    let contactId = emailItem.data("modelId");
+  });
+
   $(document).on("click", "#addNewEmail", function () {
     let emailAddress = $("#newEmailAddress").val();
     let emailAddressType = $("#newEmailAddressType").val();
+    let emailAddressPrimary = $("#newEmailAddressPrimary").prop("checked");
     let emailTypeClass;
 
     if (emailAddressType === "Personal") {
@@ -47,6 +54,8 @@ $(function () {
           emailAddress +
           '" data-type="' +
           emailAddressType +
+          '" data-primary="' +
+          emailAddressPrimary +
           '">' +
           '<span class="badge ' +
           emailTypeClass +
@@ -56,6 +65,9 @@ $(function () {
           '<span class="m-l-20">' +
           emailAddress +
           " </span>" +
+          '<button id="makePrimary" class="m-l-20">' +
+          "Make Primary" +
+          " </button>" +
           '<a class="redText pointer float-right removeEmail" title="Delete Email">X</a>' +
           "</li>"
       );
@@ -141,6 +153,7 @@ $(function () {
           return {
             Email: $(this).data("email"),
             Type: $(this).data("type"),
+            Primary: $(this).data("primary"),
           };
         })
         .get();

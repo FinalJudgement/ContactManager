@@ -59,7 +59,8 @@ namespace ContactManagerStarter.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
-                    ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsPrimary = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -95,13 +96,13 @@ namespace ContactManagerStarter.Migrations
 
             migrationBuilder.InsertData(
                 table: "EmailAddresses",
-                columns: new[] { "Id", "ContactId", "Email", "Type" },
+                columns: new[] { "Id", "ContactId", "Email", "Type", "IsPrimary" },
                 values: new object[,]
                 {
-                    { new Guid("3a406f64-ad7b-4098-ab01-7e93aae2b851"), new Guid("b728f6ef-65d8-4da2-8e5f-0f67e3c3401c"), "SteveJobs@apple.com", 1 },
-                    { new Guid("3ddeb084-5e5d-4eca-b275-e4f6886e04dc"), new Guid("b728f6ef-65d8-4da2-8e5f-0f67e3c3401c"), "Steve@Jobs.com", 0 },
-                    { new Guid("5111f412-a7f4-4169-bb27-632687569ccd"), new Guid("930d4f10-9daf-4582-b4bb-cb9abfd382b3"), "Bill@gates.com", 0 },
-                    { new Guid("d1a50413-20c0-4972-a351-8be24e1fc939"), new Guid("99580d68-9d2f-4552-862e-06b3204193f1"), "SundarPichai@gmail.com", 1 }
+                    { new Guid("3a406f64-ad7b-4098-ab01-7e93aae2b851"), new Guid("b728f6ef-65d8-4da2-8e5f-0f67e3c3401c"), "SteveJobs@apple.com", 1, false },
+                    { new Guid("3ddeb084-5e5d-4eca-b275-e4f6886e04dc"), new Guid("b728f6ef-65d8-4da2-8e5f-0f67e3c3401c"), "Steve@Jobs.com", 0, true },
+                    { new Guid("5111f412-a7f4-4169-bb27-632687569ccd"), new Guid("930d4f10-9daf-4582-b4bb-cb9abfd382b3"), "Bill@gates.com", 0, true },
+                    { new Guid("d1a50413-20c0-4972-a351-8be24e1fc939"), new Guid("99580d68-9d2f-4552-862e-06b3204193f1"), "SundarPichai@gmail.com", 1, true }
                 });
 
             migrationBuilder.CreateIndex(

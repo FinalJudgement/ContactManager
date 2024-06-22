@@ -171,6 +171,9 @@ namespace ContactManagerStarter.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("bit");
+
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
@@ -186,6 +189,7 @@ namespace ContactManagerStarter.Migrations
                             Id = new Guid("5111f412-a7f4-4169-bb27-632687569ccd"),
                             ContactId = new Guid("930d4f10-9daf-4582-b4bb-cb9abfd382b3"),
                             Email = "Bill@gates.com",
+                            IsPrimary = true,
                             Type = 0
                         },
                         new
@@ -193,6 +197,7 @@ namespace ContactManagerStarter.Migrations
                             Id = new Guid("3ddeb084-5e5d-4eca-b275-e4f6886e04dc"),
                             ContactId = new Guid("b728f6ef-65d8-4da2-8e5f-0f67e3c3401c"),
                             Email = "Steve@Jobs.com",
+                            IsPrimary = true,
                             Type = 0
                         },
                         new
@@ -200,6 +205,7 @@ namespace ContactManagerStarter.Migrations
                             Id = new Guid("3a406f64-ad7b-4098-ab01-7e93aae2b851"),
                             ContactId = new Guid("b728f6ef-65d8-4da2-8e5f-0f67e3c3401c"),
                             Email = "SteveJobs@apple.com",
+                            IsPrimary = false,
                             Type = 1
                         },
                         new
@@ -207,6 +213,7 @@ namespace ContactManagerStarter.Migrations
                             Id = new Guid("d1a50413-20c0-4972-a351-8be24e1fc939"),
                             ContactId = new Guid("99580d68-9d2f-4552-862e-06b3204193f1"),
                             Email = "SundarPichai@gmail.com",
+                            IsPrimary = true,
                             Type = 1
                         });
                 });
