@@ -27,23 +27,33 @@ namespace ContactManager.Controllers
 
         public async Task<IActionResult> DeleteContact(Guid id)
         {
-            var contactToDelete = await _context.Contacts
-                .Include(x => x.EmailAddresses)
-                .FirstOrDefaultAsync(x => x.Id == id);
-
-            if (contactToDelete == null)
+            try
             {
-                return BadRequest();
+                var contactToDelete = await _context.Contacts
+                                .Include(x => x.EmailAddresses)
+                                .FirstOrDefaultAsync(x => x.Id == id);
+
+                if (contactToDelete == null)
+                {
+                    return BadRequest();
+                }
+
+                _context.EmailAddresses.RemoveRange(contactToDelete.EmailAddresses);
+                _context.Contacts.Remove(contactToDelete);
+
+                await _context.SaveChangesAsync();
+
+                await _hubContext.Clients.All.SendAsync("Update");
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Problem();
             }
 
-            _context.EmailAddresses.RemoveRange(contactToDelete.EmailAddresses);
-            _context.Contacts.Remove(contactToDelete);
 
-            await _context.SaveChangesAsync();
-
-            await _hubContext.Clients.All.SendAsync("Update");
-
-            return Ok();
         }
 
         public async Task<IActionResult> EditContact(Guid id)
@@ -82,9 +92,9 @@ namespace ContactManager.Controllers
         }
 
         public IActionResult Index()
-            {
-                return View();
-            }
+        {
+            return View();
+        }
 
         public IActionResult NewContact()
         {
@@ -92,7 +102,7 @@ namespace ContactManager.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveContact([FromBody]SaveContactViewModel model)
+        public async Task<IActionResult> SaveContact([FromBody] SaveContactViewModel model)
         {
             var contact = model.ContactId == Guid.Empty
                 ? new Contact { Title = model.Title, FirstName = model.FirstName, LastName = model.LastName, DOB = model.DOB }
@@ -155,27 +165,36 @@ namespace ContactManager.Controllers
 
         private void SendEmailNotification(Guid contactId)
         {
-            var message = new MimeMessage();
-
-            message.From.Add(new MailboxAddress("noreply", "noreply@contactmanager.com"));
-            message.To.Add(new MailboxAddress("SysAdmin", "Admin@contactmanager.com"));
-            message.Subject = "ContactManager System Alert";
-
-            message.Body = new TextPart("plain")
+            try
             {
-                Text = "Contact with id:" + contactId.ToString() +" was updated"
-            };
+                var message = new MimeMessage();
 
-            using (var client = new SmtpClient())
-            {
-                // For demo-purposes, accept all SSL certificates (in case the server supports STARTTLS)
-                client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+                message.From.Add(new MailboxAddress("noreply", "noreply@contactmanager.com"));
+                message.To.Add(new MailboxAddress("SysAdmin", "Admin@contactmanager.com"));
+                message.Subject = "ContactManager System Alert";
 
-                client.Connect("127.0.0.1", 25, false);
+                message.Body = new TextPart("plain")
+                {
+                    Text = "Contact with id:" + contactId.ToString() + " was updated"
+                };
 
-                client.Send(message);
-                client.Disconnect(true);
+                using (var client = new SmtpClient())
+                {
+                    // For demo-purposes, accept all SSL certificates (in case the server supports STARTTLS)
+                    client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+
+                    client.Connect("127.0.0.1", 25, false);
+
+                    client.Send(message);
+                    client.Disconnect(true);
+                }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+
 
         }
 

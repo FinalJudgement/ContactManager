@@ -125,7 +125,9 @@ $(function () {
     //$('.addressFeedback').hide();
     //}
   });
-
+  $(document).on("click", ".makePrimaryEmail", function () {
+    console.log("Hello Earth");
+  });
   $(document).on("click", ".removeEmail", function () {
     $(this).parent().remove();
   });
