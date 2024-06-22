@@ -17,6 +17,9 @@ $(function () {
         $("#EditContactModalContent").html(data);
         $("#modal-editContact").modal("show");
         $("#ServerErrorAlert").hide();
+        $("#editContactDOB").datepicker({
+          dateFormat: "mm-dd-yy",
+        });
       },
       error: function () {
         $("#ServerErrorAlert").show();
@@ -121,10 +124,10 @@ $(function () {
     $("#newAddressZip").val("");
 
     //$('.addressInput').removeClass("invalidInput");
-
     //$('.addressFeedback').hide();
     //}
   });
+
   $(document).on("click", ".makePrimaryEmail", function () {
     console.log("Hello Earth");
   });
@@ -242,6 +245,9 @@ $(function () {
         $("#EditContactModalContent").html(data);
         $("#modal-editContact").modal("show");
         $("#ServerErrorAlert").hide();
+        $("#editContactDOB").datepicker({
+          dateFormat: "mm-dd-yy",
+        });
       },
       error: function () {
         $("#ServerErrorAlert").show();
