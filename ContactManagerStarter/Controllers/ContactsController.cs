@@ -50,7 +50,7 @@ namespace ContactManager.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return Problem();
+                return Problem("An error occurred while deleting contact details");
             }
 
 
@@ -58,37 +58,59 @@ namespace ContactManager.Controllers
 
         public async Task<IActionResult> EditContact(Guid id)
         {
-            var contact = await _context.Contacts
-                .Include(x => x.EmailAddresses)
-                .Include(x => x.Addresses)
-                .FirstOrDefaultAsync(x => x.Id == id);
 
-            if (contact == null)
+            try
             {
-                return NotFound();
+                var contact = await _context.Contacts
+                                .Include(x => x.EmailAddresses)
+                                .Include(x => x.Addresses)
+                                .FirstOrDefaultAsync(x => x.Id == id);
+
+                if (contact == null)
+                {
+                    return NotFound();
+                }
+
+                var viewModel = new EditContactViewModel
+                {
+                    Id = contact.Id,
+                    Title = contact.Title,
+                    FirstName = contact.FirstName,
+                    LastName = contact.LastName,
+                    DOB = contact.DOB,
+                    EmailAddresses = contact.EmailAddresses,
+                    Addresses = contact.Addresses
+                };
+
+                return PartialView("_EditContact", viewModel);
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine(ex.Message);
+                return Problem("An error occurred while editing contact details");
+
             }
 
-            var viewModel = new EditContactViewModel
-            {
-                Id = contact.Id,
-                Title = contact.Title,
-                FirstName = contact.FirstName,
-                LastName = contact.LastName,
-                DOB = contact.DOB,
-                EmailAddresses = contact.EmailAddresses,
-                Addresses = contact.Addresses
-            };
 
-            return PartialView("_EditContact", viewModel);
         }
 
         public async Task<IActionResult> GetContacts()
         {
-            var contactList = await _context.Contacts
-                .OrderBy(x => x.FirstName)
-                .ToListAsync();
+            try
+            {
+                var contactList = await _context.Contacts
+                               .OrderBy(x => x.FirstName)
+                               .ToListAsync();
 
-            return PartialView("_ContactTable", new ContactViewModel { Contacts = contactList });
+                return PartialView("_ContactTable", new ContactViewModel { Contacts = contactList });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Problem("an error occurred while fetching contacts");
+            }
+
         }
 
         public IActionResult Index()
@@ -104,63 +126,73 @@ namespace ContactManager.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveContact([FromBody] SaveContactViewModel model)
         {
-            var contact = model.ContactId == Guid.Empty
-                ? new Contact { Title = model.Title, FirstName = model.FirstName, LastName = model.LastName, DOB = model.DOB }
-                : await _context.Contacts.Include(x => x.EmailAddresses).Include(x => x.Addresses).FirstOrDefaultAsync(x => x.Id == model.ContactId);
-
-            if (contact == null)
+            try
             {
-                return NotFound();
-            }
+                var contact = model.ContactId == Guid.Empty
+               ? new Contact { Title = model.Title, FirstName = model.FirstName, LastName = model.LastName, DOB = model.DOB }
+               : await _context.Contacts.Include(x => x.EmailAddresses).Include(x => x.Addresses).FirstOrDefaultAsync(x => x.Id == model.ContactId);
 
-            _context.EmailAddresses.RemoveRange(contact.EmailAddresses);
-            _context.Addresses.RemoveRange(contact.Addresses);
-
-
-            foreach (var email in model.Emails)
-            {
-                contact.EmailAddresses.Add(new EmailAddress
+                if (contact == null)
                 {
-                    Type = email.Type,
-                    Email = email.Email,
-                    Contact = contact
-                });
-            }
+                    return NotFound();
+                }
 
-            foreach (var address in model.Addresses)
-            {
-                contact.Addresses.Add(new Address
+                _context.EmailAddresses.RemoveRange(contact.EmailAddresses);
+                _context.Addresses.RemoveRange(contact.Addresses);
+
+
+                foreach (var email in model.Emails)
                 {
-                    Street1 = address.Street1,
-                    Street2 = address.Street2,
-                    City = address.City,
-                    State = address.State,
-                    Zip = address.Zip,
-                    Type = address.Type
-                });
+                    contact.EmailAddresses.Add(new EmailAddress
+                    {
+                        Type = email.Type,
+                        Email = email.Email,
+                        Contact = contact
+                    });
+                }
+
+                foreach (var address in model.Addresses)
+                {
+                    contact.Addresses.Add(new Address
+                    {
+                        Street1 = address.Street1,
+                        Street2 = address.Street2,
+                        City = address.City,
+                        State = address.State,
+                        Zip = address.Zip,
+                        Type = address.Type
+                    });
+                }
+
+                contact.Title = model.Title;
+                contact.FirstName = model.FirstName;
+                contact.LastName = model.LastName;
+                contact.DOB = model.DOB;
+
+                if (model.ContactId == Guid.Empty)
+                {
+                    await _context.Contacts.AddAsync(contact);
+                }
+                else
+                {
+                    _context.Contacts.Update(contact);
+                }
+
+
+                await _context.SaveChangesAsync();
+                await _hubContext.Clients.All.SendAsync("Update");
+
+                SendEmailNotification(contact.Id);
+
+                return Ok();
             }
-
-            contact.Title = model.Title;
-            contact.FirstName = model.FirstName;
-            contact.LastName = model.LastName;
-            contact.DOB = model.DOB;
-
-            if (model.ContactId == Guid.Empty)
+            catch (Exception ex)
             {
-                await _context.Contacts.AddAsync(contact);
-            }
-            else
-            {
-                _context.Contacts.Update(contact);
+                Console.WriteLine(ex.Message);
+                return Problem("An error occurred while saving the contact");
             }
 
 
-            await _context.SaveChangesAsync();
-            await _hubContext.Clients.All.SendAsync("Update");
-
-            SendEmailNotification(contact.Id);
-
-            return Ok();
         }
 
         private void SendEmailNotification(Guid contactId)
@@ -192,6 +224,7 @@ namespace ContactManager.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+
             }
 
 
