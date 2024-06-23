@@ -7,33 +7,9 @@
             <label>Title*</label>
             <select id="editContactTitle" type="text" class="form-control"
                 value="@(Model.Title != null ? @Model.Title : string.Empty)">
-                @if (Model.Title == "Mr.")
-                {
-                    <option value="Mr." selected>Mr.</option>
-
-                }
-                else
-                {
-                    <option value="Mr.">Mr.</option>
-                }
-                @if (Model.Title == "Mrs.")
-                {
-                    <option value="Mrs." selected>Mrs.</option>
-
-                }
-                else
-                {
-                    <option value="Mrs.">Mrs.</option>
-                }
-                @if (Model.Title == "Ms.")
-                {
-                    <option value="Ms." selected>Ms.</option>
-
-                }
-                else
-                {
-                    <option value="Ms.">Ms.</option>
-                }
+                <option value="Mr." selected="@(Model.Title == "Mr.")">Mr.</option>
+                <option value="Mrs." selected="@(Model.Title == "Mr.")">Mrs.</option>
+                <option value="Ms." selected="@(Model.Title == "Mr.")">Ms.</option>
             </select>
 
             <div id="invalidTitleFeedback" class="invalidMessage">
@@ -58,8 +34,8 @@
         </div>
         <div class="form-group col-lg-4">
             <label>Date of Birth*</label>
-            <input id="editContactDOB" class="form-control" 
-            value="@(Model.DOB != null ? @Model.DOB.ToString("MM-dd-yyyy") : string.Empty)">
+            <input id="editContactDOB" class="form-control"
+                value="@(Model.DOB != null ? @Model.DOB.ToString("MM-dd-yyyy") : string.Empty)">
             <div id="invalidDOBFeedback" class="invalidMessage">
                 Please provide a valid Date of Birth.
             </div>
@@ -90,7 +66,7 @@
                             }
 
                             <span class="m-l-20">@emailAddress.Email</span>
-                            <button class="makePrimaryEmail">Button</button>
+
                             <a class="redText pointer float-right removeEmail" title="Delete Email">X</a>
                         </li>
                     }
