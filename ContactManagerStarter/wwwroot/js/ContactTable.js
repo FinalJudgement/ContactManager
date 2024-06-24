@@ -18,6 +18,9 @@ $(function () {
         $("#modal-editContact").modal("show");
         $("#ServerErrorAlert").hide();
         $("#editContactDOB").datepicker({
+          changeMonth: true,
+          changeYear: true,
+          yearRange: "1930:2010",
           dateFormat: "mm-dd-yy",
         });
       },
@@ -193,10 +196,17 @@ $(function () {
         isValid = false;
       }
 
-      if (data.newEmail != "") {
+      if (data.NewEmail != "") {
         isValid = false;
         alert(
           "Please add the new email address to the list before saving the contact."
+        );
+      }
+
+      if (data.NewAddress != "") {
+        isValid = false;
+        alert(
+          "Please add the new address to the list before saving the contact."
         );
       }
 
@@ -211,8 +221,14 @@ $(function () {
       LastName: $("#editContactLastName").val(),
       DOB: $("#editContactDOB").val(),
       Emails: getEmailAddresses(),
-      newEmail: $("#newEmailAddress").val(),
+      NewEmail: $("#newEmailAddress").val(),
       Addresses: getAddresses(),
+      NewAddress:
+        $("#newAddressStreet1").val() +
+        $("#newAddressStreet2").val() +
+        $("#newAddressCity").val() +
+        $("#newAddressState").val() +
+        $("#newAddressZip").val(),
     };
 
     if (validateInputs(data)) {
@@ -246,6 +262,9 @@ $(function () {
         $("#modal-editContact").modal("show");
         $("#ServerErrorAlert").hide();
         $("#editContactDOB").datepicker({
+          changeMonth: true,
+          changeYear: true,
+          yearRange: "1930:2010",
           dateFormat: "mm-dd-yy",
         });
       },
